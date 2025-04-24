@@ -1,0 +1,306 @@
+{
+  "name": "Krunal's Tool Recommendation System",
+  "nodes": [
+    {
+      "parameters": {
+        "functionCode": "return [\n  {\n    json: {\n      tools: [\n        {\n          name: \"Apollo.io\",\n          description: \"Find B2B leads using filters like funding, job title, tech stack, and intent signals.\",\n          filters: [\"funding\", \"job title\", \"tech stack\", \"location\", \"intent signals\", \"industry\", \"company size\"]\n        },\n        {\n          name: \"ZoomInfo\",\n          description: \"B2B database with filters like revenue, employee count, location, and buyer intent.\",\n          filters: [\"revenue\", \"employee count\", \"location\", \"job title\", \"intent signals\", \"industry\"]\n        },\n        {\n          name: \"Clearbit\",\n          description: \"Company enrichment using domain or email; strong on firmographics and tech stack.\",\n          filters: [\"industry\", \"company size\", \"revenue\", \"location\", \"tech stack\"]\n        },\n        {\n          name: \"Clay\",\n          description: \"Flexible automation for blending multiple data sources to enrich and filter leads.\",\n          filters: [\"job title\", \"email verification\", \"LinkedIn profile\", \"tech stack\", \"custom fields\"]\n        },\n        {\n          name: \"Lusha\",\n          description: \"Provides accurate phone numbers and email addresses for outreach.\",\n          filters: [\"job title\", \"industry\", \"location\", \"company name\"]\n        },\n        {\n          name: \"Cognism\",\n          description: \"Sales data platform focusing on GDPR-compliant contact data in Europe.\",\n          filters: [\"intent\", \"industry\", \"company size\", \"location\", \"seniority level\"]\n        },\n        {\n          name: \"LeadIQ\",\n          description: \"Captures leads from LinkedIn, syncs to CRMs.\",\n          filters: [\"LinkedIn job title\", \"company\", \"location\"]\n        },\n        {\n          name: \"Hunter.io\",\n          description: \"Finds email addresses based on name/domain combos.\",\n          filters: [\"domain\", \"first name\", \"last name\", \"company\"]\n        },\n        {\n          name: \"Snov.io\",\n          description: \"Email finder, verifier, and outreach tool.\",\n          filters: [\"industry\", \"job title\", \"company size\", \"location\", \"email domain\"]\n        },\n        {\n          name: \"Uplead\",\n          description: \"Real-time contact database with a 95% accuracy claim.\",\n          filters: [\"industry\", \"location\", \"job title\", \"email verified\", \"tech used\"]\n        },\n        {\n          name: \"Kaspr\",\n          description: \"LinkedIn-based prospecting tool.\",\n          filters: [\"job title\", \"company\", \"location\"]\n        },\n        {\n          name: \"BuiltWith\",\n          description: \"Tech stack analysis for outbound targeting.\",\n          filters: [\"CMS\", \"analytics tools\", \"marketing tools\", \"ecommerce platform\", \"hosting provider\"]\n        },\n        {\n          name: \"Albacross\",\n          description: \"Tracks anonymous site visitors and identifies companies.\",\n          filters: [\"website visitor IP\", \"company name\", \"location\", \"industry\"]\n        },\n        {\n          name: \"Leadfeeder\",\n          description: \"Turns website traffic into B2B leads.\",\n          filters: [\"company name\", \"country\", \"visit behavior\", \"industry\"]\n        },\n        {\n          name: \"PhantomBuster\",\n          description: \"LinkedIn and web scraping automation.\",\n          filters: [\"LinkedIn search terms\", \"company filters\", \"has email\", \"location\"]\n        },\n        {\n          name: \"Wappalyzer\",\n          description: \"Website tech detection and firmographics.\",\n          filters: [\"CMS\", \"ecommerce\", \"hosting\", \"analytics\", \"security\"]\n        },\n        {\n          name: \"People Data Labs\",\n          description: \"Powerful data API for people & company enrichment.\",\n          filters: [\"job title\", \"company\", \"location\", \"skills\", \"education\", \"seniority\"]\n        },\n        {\n          name: \"Slintel\",\n          description: \"Intent-driven and technographic lead data.\",\n          filters: [\"intent signals\", \"technology used\", \"industry\", \"revenue\", \"company size\"]\n        },\n        {\n          name: \"Seamless.ai\",\n          description: \"Real-time B2B contact and company info.\",\n          filters: [\"job title\", \"company size\", \"revenue\", \"industry\", \"email status\"]\n        },\n        {\n          name: \"RocketReach\",\n          description: \"Email and contact discovery tool.\",\n          filters: [\"job title\", \"company\", \"location\", \"LinkedIn profile\", \"domain\"]\n        }\n      ]\n    }\n  }\n];"
+      },
+      "id": "7ebff891-9e6d-494e-acff-845aeb3d5969",
+      "name": "Tool Info",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [
+        940,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fb228201-0f56-4e0d-a546-21715edd37cc",
+              "name": "message.content",
+              "value": "={{ $json.message.content }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "be3aafae-21d3-4931-bccb-d45a9eb31345",
+      "name": "Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1720,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const items = $input.all();\n\nconst updatedItems = items.map((item) => {\n  const lines = item?.json?.message?.content.split(/\\r?\\n/);\n  item.json.firstPart = lines[0] || \"\";\n  item.json.secondPart = lines[1] || \"\";\n  item.json.thirdPart = lines[2] || \"\";\n  return item;\n});\n\nreturn updatedItems;\n"
+      },
+      "id": "9196ffc9-7988-4d4c-b8b0-ea57c5956adf",
+      "name": "Recommendation",
+      "type": "n8n-nodes-base.aiTransform",
+      "typeVersion": 1,
+      "position": [
+        1940,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "d4af4862-68aa-4516-a35f-3c58ecedbf45",
+              "name": "tools",
+              "value": "={{ $json.tools }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "219cbd7c-5f64-401d-bf5b-f9ce8da07069",
+      "name": "Tools Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1140,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c9873400-b4b2-441f-9633-72de06d14a0d",
+              "name": "company website",
+              "value": "={{ $json.body['my company website'] }}",
+              "type": "string"
+            },
+            {
+              "id": "057b24ff-be9c-47f9-985f-fcda0f66846d",
+              "name": "filters",
+              "value": "={{ $json.body['filter requirement'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "40f896e1-948b-4685-9fa8-67fcf5df1348",
+      "name": "User Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        740,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f722a375-103a-4c0a-8cc9-9313258685bb",
+              "name": "Tool",
+              "value": "={{ $json.firstPart }}",
+              "type": "string"
+            },
+            {
+              "id": "68ca5528-745e-42ce-9746-625d5dd01ac5",
+              "name": "Filters",
+              "value": "={{ $json.secondPart }}",
+              "type": "string"
+            },
+            {
+              "id": "66f32759-8486-4d85-a66f-f3509fc7277e",
+              "name": "Reason",
+              "value": "={{ $json.thirdPart }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "67ef5f95-2052-417e-b4ee-69c01a08adfd",
+      "name": "Final Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2160,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "id": "813476f6-4b58-4b7e-afad-be9f9e8312da",
+      "name": "Respond to Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        2380,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "4676bda4-655b-4814-a1e5-b8f4e4d0a9ba",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "6f36673d-a0a0-4ed7-84a8-a90ac1bfa18a",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        520,
+        500
+      ],
+      "webhookId": "4676bda4-655b-4814-a1e5-b8f4e4d0a9ba"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=I am working at{{ $('User Data').item.json['company website'] }}. Here is my filtering requirement details: {{ $('User Data').item.json.filters }}. now take a look at the below list.\n{{ $json.tools }} from this find out which is better for my requirement. recommend the best tool. separate your content in such a way that it represents the tool name and the filter. in your reply, write the name of the tool and then in the next line write filters. in your reply, in the first line only mention the tool name and in the second line mention the recommended filters and in the third line mention the reason behind selecting that tool. do not put anything in the beginning of the line like, tool name, filters, reason etc. just write answer."
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6985ea2e-5ba7-4c8e-aec2-f7f4ef113543",
+      "name": "GTM Finder",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.6,
+      "position": [
+        1340,
+        500
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "3s9snrs3MsbeMLky",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Tool Info": {
+      "main": [
+        [
+          {
+            "node": "Tools Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Data": {
+      "main": [
+        [
+          {
+            "node": "Recommendation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tools Data": {
+      "main": [
+        [
+          {
+            "node": "GTM Finder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User Data": {
+      "main": [
+        [
+          {
+            "node": "Tool Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recommendation": {
+      "main": [
+        [
+          {
+            "node": "Final Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Final Data": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "User Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GTM Finder": {
+      "main": [
+        [
+          {
+            "node": "Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "16383260-47ff-4d4e-b010-006b3b69b571",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "f35844c20bd7f8456f907e3b5a901af1cf08cec7fee985138953357fd244e5bd"
+  },
+  "id": "A5RibPOH47R8CZyV",
+  "tags": []
+}
