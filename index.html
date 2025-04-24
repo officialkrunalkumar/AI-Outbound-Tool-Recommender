@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Krunalkumar's Outbound Tool Recommender</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    #response { margin-top: 20px; padding: 10px; border: 1px solid #ccc; background: #f9f9f9; }
+  </style>
+</head>
+<body bgcolor="pink">
+  <h1 style="text-align: center;">  -:  <u>Krunalkumar's Outbound Tool Recommender</u>  :-  </h1>
+
+  <h4>Enter Your Requirements in the form below :-</h4>
+  <br>
+  <form id="webhookForm">
+    <table>
+        <tr>
+            <td>
+                <label> I am working at : </label> <input type="text" name="my company name" required />
+            </td>
+            <td>
+                <label> Needs : </label> <input type="text" name="filter requirement" required />
+            </td>
+            <td>
+              <button type="submit">Send</button>
+            </td>
+        </tr>
+    </table>
+  </form>
+  <br>
+  <h4>Response from the server will be displayed below :-</h4>
+  <div id="response"></div>
+
+  <script>
+    const form = document.getElementById('webhookForm');
+    const responseDiv = document.getElementById('response');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData.entries());
+
+      try {
+        const res = await fetch('https://zeniai.app.n8n.cloud/webhook/4676bda4-655b-4814-a1e5-b8f4e4d0a9ba', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        const responseData = await res.json();
+        if (Array.isArray(responseData)) {
+          responseDiv.innerHTML = responseData.map(item => `
+            <div class="card">
+              <h3>${item.Tool?.trim() || 'No Tool Name'}</h3>
+              <p><span class="label">Filters:</span> ${item.Filters?.trim()}</p>
+              <p><span class="label">Reason:</span> ${item.Reason?.trim()}</p>
+            </div>
+          `).join('');
+        } else {
+          responseDiv.innerHTML = `<div class="card"><p>${JSON.stringify(responseData, null, 2)}</p></div>`;
+        }
+        responseDiv.innerHTML = `<strong>Response:</strong><pre>${JSON.stringify(responseData, null, 2)}</pre>`;
+      } catch (err) {
+        responseDiv.innerHTML = `<strong>Error:</strong> ${err.message}`;
+      }
+    });
+  </script>
+
+</body>
+</html>
